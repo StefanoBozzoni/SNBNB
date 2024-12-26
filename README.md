@@ -2,7 +2,7 @@
 
 This application is a Chrome extension designed to streamline branch naming for developers working with ServiceNow. It captures the serial number and description of a currently opened task (e.g., a bug or story) in a ServiceNow web page, generates a branch name from this information, and copies it to the clipboard.
 
-You can also use this extension alongside the **Branch Creator** repository to automatically create a branch in a specified folder.
+You can also use this extension alongside the **Branch Creator** (branch_creator) repository to automatically create a branch in a specified folder.
 
 ---
 
