@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const frameSelect = document.getElementById("frame-select");
   const htmlOutput = document.getElementById("html-output");
   const btnfetchHtml = document.getElementById("fetch-frame-html");
+  const translatedtext = document.getElementById("translatedText");
 
   // Fetch the frames and populate the dropdown
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -78,26 +79,49 @@ document.addEventListener("DOMContentLoaded", () => {
 			}	
 			if (inputValue.startsWith("STRY")) {
 				inputValue = "feature/"+inputValue;
-			}	
-			const description_with_underscores = descriptionValue
-			.replace(/(?:\[Android\]|\[Ios\]|-\s)/g, "").trim()
-			.replace(/ /g, "_")
-			.replace(/__/g, "_").slice(0, 40);
+			}
+			//.replace(/(?:\[Android\]|\[Ios\]|-\s)/g, "").trim()
 			
-			const name = inputValue+"_BOZZONI_"+description_with_underscores;
+			const description_with_underscores = descriptionValue
+			.replace(/\[.*?\]/g, '').trim()
+			.replace(/ /g, "_")
+			.replace(/__/g, "_").slice(0, 50).trim();
+			
+			const name = inputValue+"_BOZZONI_";
 			
 			// Return both input value and HTML as an object
-			return { name, frameHtml };
+			return { name, frameHtml, description_with_underscores };
 		},
 	  },
 	  (results) => {
 		if (chrome.runtime.lastError) {
 		  console.error("Error:", chrome.runtime.lastError.message);
 		} else if (results && results[0]?.result) {
-		  const { name, frameHtml } = results[0].result;
+		  const { name, frameHtml, description_with_underscores } = results[0].result;
 		  htmlOutput.value = frameHtml;
-		  branchName.value = name;
+		  branchName.value = name+description_with_underscores;
+		  const sentence = encodeURIComponent(description_with_underscores);
 		  navigator.clipboard.writeText(name).then(() => {console.log('text copied to clipboard')}).catch(err => {console.error('filed to copy text', err)});
+
+		  fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=en&dt=t&dt=bd&dj=1&q=${sentence}`)
+		  .then(response => {
+			if (!response.ok) {
+			  throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			return response.json();
+		  })
+		  .then(data => {
+			translatedText.value = name+data.sentences[0].trans;
+			if (data.sentences[0].trans) {
+				navigator.clipboard.writeText(translatedText.value).then(() => {console.log('text copied to clipboard')}).catch(err => {console.error('filed to copy text', err)});
+			}
+			console.log('Translation:', data);
+			// Process the translation data as needed
+		  })
+		  .catch(error => {
+			console.error('Error fetching translation:', error);
+		  });
+
 		  console.log("Input value:", results[0].result); // Value of the input field
 		} else {
 		  console.log("Input field not found or no result.");

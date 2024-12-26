@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SBNB",
+  "name": "SN Branch Name builder",
   "version": "1.0",
-  "description": "Sisal Branch Name Builder - Chrome Extension",
+  "description": "Service Now Branch Name Builder - Chrome Extension",
   "permissions": [
     "activeTab", "scripting", "webNavigation", "clipboardWrite"
   ],
