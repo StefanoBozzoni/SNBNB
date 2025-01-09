@@ -4,16 +4,18 @@
   "version": "1.0",
   "description": "Service Now Branch Name Builder - Chrome Extension",
   "permissions": [
-    "activeTab", "scripting", "webNavigation", "clipboardWrite"
+    "activeTab", "scripting","webNavigation", "clipboardWrite"
   ],
   "action": {
     "default_popup": "popup.html"
   },
-  "host_permissions": ["*://*/*"],
+  "host_permissions": ["*://*/*","http://*/*", "https://*/*"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js","popup.js"],
+      "all_frames": true,
+      "run_at": "document_end"
     }
   ],
   "icons": {
