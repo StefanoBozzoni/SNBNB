@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const name = inputValue+"_BOZZONI_";
 
 			const description_with_underscores = descriptionValue
-			.replace(/\[.|-*?\]/g, '').trim()
+			.replace(/\[.*?\]/g, '').trim()
 			.replace(/ /g, "_")
 			.replace(/-/g, "")
 			.replace(/__/g, "_")
