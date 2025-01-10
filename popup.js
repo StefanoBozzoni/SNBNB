@@ -41,8 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			  i = frames.length - 1;
 			  while (i > 0) {
 				if (frames[i].url === "about:blank") {
-					if (frameSelect.selectedIndex >= 1) {frameSelect.selectedIndex--;}
-				}
+					if (frameSelect.selectedIndex >= 1) {frameSelect.selectedIndex = i-1;}
+				} else break;
 				i--;
  			  }
 			  btnfetchHtml.click();
@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 		});
+
+		
 	  });
   };
   
