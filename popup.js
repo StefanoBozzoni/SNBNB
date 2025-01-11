@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const translatedtext = document.getElementById("translatedText");
 
  
-  function runWithDelays() {
+  function runWQueryFrames() {
 
 	  // Fetch the frames and populate the dropdown
 	  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -54,8 +54,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		
 	  });
   };
+
+  function cleanString(aString) {
+	return aString
+	.replace(/\[.*?\]/g, '').trim()
+	.replace(/ /g, "_")
+	.replace(/-/g, "")
+	.replace(/\//g, "_")
+	.replace(/__/g, "_")
+	.replace(/__/g, "_")
+	.slice(0, 100).trim();
+  }
   
-  runWithDelays();
+  runWQueryFrames();
 
   // Fetch the HTML of the selected frame
   document.getElementById("fetch-frame-html").addEventListener("click", () => {
@@ -102,27 +113,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			}	
 
 			const name = inputValue+"_BOZZONI_";
-
-			const description_with_underscores = descriptionValue
-			.replace(/\[.*?\]/g, '').trim()
-			.replace(/ /g, "_")
-			.replace(/-/g, "")
-			.replace(/__/g, "_")
-			.replace(/__/g, "_")
-			.slice(0, 60).trim();
-
 			const frameHtml = document.documentElement.outerHTML;
-			return {name, frameHtml , description_with_underscores};
+			return {name, frameHtml , descriptionValue};
 		},
 	  },
 	  (results) => {
 		if (chrome.runtime.lastError) {
 		  console.error("Error:", chrome.runtime.lastError.message);
 		} else if (results && results[0]?.result) {
-		  const { name, frameHtml, description_with_underscores } = results[0].result;
+		  const { name, frameHtml, descriptionValue } = results[0].result;
 		  htmlOutput.value = frameHtml;
+
+		  const description_with_underscores = cleanString(descriptionValue);
+
 		  branchName.value = name+description_with_underscores;
-		  const sentence = encodeURIComponent(description_with_underscores);
+
+		  const sentence = encodeURIComponent(descriptionValue);
 		  navigator.clipboard.writeText(name).then(() => {console.log('text copied to clipboard')}).catch(err => {console.error('filed to copy text', err)});
 
 		  fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=en&dt=t&dt=bd&dj=1&q=${sentence}`)
@@ -133,7 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			return response.json();
 		  })
 		  .then(data => {
-			translatedText.value = name+data.sentences[0].trans;
+			
+			const description_with_underscores = cleanString(data.sentences[0].trans);
+
+			translatedText.value = name+description_with_underscores;
 			if (data.sentences[0].trans) {
 				navigator.clipboard.writeText(translatedText.value).then(() => {console.log('text copied to clipboard')}).catch(err => {console.error('filed to copy text', err)});
 			}
