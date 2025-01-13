@@ -56,18 +56,19 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function cleanString(aString) {
-	if (isNaN(aString) || aString === null) 
-		return ""
-	else 
-		return aString
-		.replace(/\[.*?\]/g, '').trim()
-		.replace(/ /g, "_")
-		.replace(/-/g, "")
-		.replace(/\//g, "_")
-		.replace(/__/g, "_")
-		.replace(/__/g, "_")
-		.slice(0, 100).trim();
-  }
+		if (aString == null) {
+			return "";
+		} else { 
+			return aString
+			.replace(/\[.*?\]/g, '').trim()
+			.replace(/ /g, "_")
+			.replace(/-/g, "")
+			.replace(/\//g, "_")
+			.replace(/__/g, "_")
+			.replace(/__/g, "_")
+			.slice(0, 100).trim();
+		}
+	}
   
   runWQueryFrames();
 
